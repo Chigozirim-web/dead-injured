@@ -1,0 +1,1 @@
+export type HandleInputFn = (name: string, secret: string) => void;
