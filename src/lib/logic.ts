@@ -1,9 +1,4 @@
-export type ResultType = 'dead' | 'injured';
-export type Feedback = {
-    'dead': number;
-    'injured': number;
-}
-
+import { Feedback } from "./types";
 
 export const isUniqueDigits = (input: string) => {
     return /^(?!.*(.).*\1)\d{4}$/.test(input);

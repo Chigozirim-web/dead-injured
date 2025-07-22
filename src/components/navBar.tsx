@@ -4,7 +4,6 @@ import Image from "next/image";
 import logo from "../../public/images/logo.png"; // Adjust the path as necessary
 
 const navLinks = [
-    { name: "Play", path: "/play " },
     { name: "Rules", path: "/rules" },
     { name: "About", path: "/about" },
 ];
