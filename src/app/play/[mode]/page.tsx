@@ -1,9 +1,11 @@
 'use client'
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from 'next/navigation';
 import { Player, Feedback, GameboardProps } from "@/lib/types";
 import { compareGuess, generateComputerGuess } from "@/lib/logic";
+import { ComputerGuesser } from "@/lib/computerGuesser";
+
 import { InputDialog } from "@/components/inputDialog";
 import { GameBoard } from "@/components/gameBoard";
 
@@ -14,9 +16,17 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import GameOverModal from "@/components/gameOverModal";
  
 export default function GameModePage() {
   const { mode } = useParams(); 
+  const computerGuesserRef = useRef<ComputerGuesser | null>(null);
+  
+  useEffect(() => {
+    if (mode === 'pvc') {
+      computerGuesserRef.current = new ComputerGuesser();
+    }
+  }, [mode])
   
   const [player1, setPlayer1] = useState('');
   const [player2, setPlayer2] = useState(''); // or computer player
@@ -29,14 +39,33 @@ export default function GameModePage() {
 
   const [computerIsThinking, setComputerIsThinking] = useState(false);
 
-  const [error, setError] = useState("");
+  //const [error, setError] = useState("");
+
   const [gameOver, setGameOver] = useState(false);
+  const [winnerName, setWinnerName] = useState("");
 
   const [currentPlayer, setCurrentPlayer] = useState<Player>('Player 1');
   const [guesses, setGuesses] = useState<{ [key in Player]?: string[] }>({});
   const [feedbacks, setFeedbacks] = useState<{ [key in Player]?: Feedback[] }>({});
   const [currentGuess, setCurrentGuess] = useState("");
   const [currentFeedback, setCurrentFeedback] = useState<Feedback>();
+
+  /* Handle Game Restart */
+  function restartGame() {
+    setGameOver(false);
+    setPlayer1("");
+    setPlayer1Secret("");
+    setPlayer2("");
+    setPlayer2Secret("");
+    setInputDialogOpen(true);
+    setComputerIsThinking(false);
+    setCurrentPlayer("Player 1");
+    setGuesses({});
+    setFeedbacks({});
+    setCurrentGuess("");
+    setCurrentFeedback(undefined);
+    computerGuesserRef.current?.reset();
+  }
 
   /* Handle Player Guesses */
   const handleGuess: (guess: string) => void = useCallback((guess: string) => {
@@ -60,11 +89,8 @@ export default function GameModePage() {
     //Check win
     if (feedback.dead === 4) {
       const currentName = currentPlayer === 'Player 1' ? player1 : player2;
-      toast(`${currentName} wins!`);
-      // Reset game or handle win logic
-      setGuesses({});
-      setFeedbacks({});
-      //setCurrentGuess("");
+      setWinnerName(currentName);
+      setGameOver(true);
       setCurrentFeedback(undefined);
       return;
     }
@@ -84,38 +110,41 @@ export default function GameModePage() {
       setCurrentPlayer('Computer');
 
       setTimeout(() => {
-        console.log("Computer is making a guess...");
-        const computerGuess = generateComputerGuess(); // or write logic for computer to guess player's secret
-        const compFeedback = compareGuess(player1Secret, computerGuess);
-
-        setComputerIsThinking(false);
-        setCurrentGuess(computerGuess);
-        setCurrentFeedback(compFeedback);
-        setGuesses(prev => ({
-          ...prev,
-          ['Computer']: [...(prev['Computer'] || []), computerGuess],
-        }));
-        setFeedbacks(prev => ({
-          ...prev,
-          ['Computer']: [...(prev['Computer'] || []), compFeedback],
-        }));
-
-        if (compFeedback.dead === 4) {
-          toast(`Computer wins!`);
-        } else {
-          setTimeout(() => {
-            console.log("Switching back to Player 1 after computer's turn");
-            setCurrentPlayer('Player 1');
-            setCurrentGuess("");
-            setCurrentFeedback(undefined);
-          }, 2500);
+        const computerGuess = computerGuesserRef.current?.makeGuess();
+        if (computerGuess) {
+          const compFeedback = compareGuess(player1Secret, computerGuess);
+          computerGuesserRef.current?.updatePossibleSecrets(computerGuess, compFeedback);
           
+          setComputerIsThinking(false);
+          setCurrentGuess(computerGuess);
+          setCurrentFeedback(compFeedback);
+          setGuesses(prev => ({
+            ...prev,
+            ['Computer']: [...(prev['Computer'] || []), computerGuess],
+          }));
+           setFeedbacks(prev => ({
+            ...prev,
+            ['Computer']: [...(prev['Computer'] || []), compFeedback],
+          }));
+
+          if(compFeedback.dead === 4) {
+            setWinnerName("Computer");
+            setGameOver(true);
+          }else {
+            setTimeout(() => {
+              setCurrentPlayer('Player 1');
+              setCurrentGuess("");
+              setCurrentFeedback(undefined);
+            }, 2500);
+          }
+        }else {
+          toast("An Internal error occured.\nAn issue with computer-guess function ")
         }
       }, 5000);
     }
     setCurrentGuess("");
     setCurrentFeedback(undefined);
-  }, [mode, player1Secret]);
+  }, [computerGuesserRef, mode, player1Secret]);
 
   const gameBoard = useMemo<{[key in Player]: GameboardProps}>(() => ({
     'Player 1': {
@@ -219,7 +248,7 @@ export default function GameModePage() {
       </div>
       <Separator className="mb-4" />
       {!inputDialogOpen && (
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-2 p-2">
           <div className="w-64 shrink-0 sticky top-4 self-start">
             <div className="p-5 bg-white shadow rounded-lg mb-5">
               <h2 className="text-md font-semibold mb-2">Guide:</h2>
@@ -227,7 +256,7 @@ export default function GameModePage() {
                 Guess the 4-digit number.
               </p>
               <p className="text-sm text-gray-600"> 
-                <code>x dead</code> = x correct digits in the correct position.
+                <code>x dead</code> ➡️ x correct digits in the correct position.
               </p>
               <p className="text-sm text-gray-600"> 
                 <code>x injured</code> ➡️ x correct digits, but in the wrong position.
@@ -246,6 +275,11 @@ export default function GameModePage() {
           </div>
         </div>
       )}
+      <GameOverModal
+        winnerName={winnerName}
+        open={gameOver}
+        onRestart={restartGame}
+      />
     </div>
   )
 }

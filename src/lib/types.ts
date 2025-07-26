@@ -10,6 +10,12 @@ export type Feedback = {
 export type Player = 'Player 1' | 'Player 2' | 'Computer';
 
 
+export type GameOverModalProps = {
+    winnerName: string;
+    open: boolean;
+    onRestart: () => void;
+};
+
 export type GameboardProps = {
     playerType: Player;
     playerName: string;

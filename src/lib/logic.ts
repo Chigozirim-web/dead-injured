@@ -6,12 +6,42 @@ export const isUniqueDigits = (input: string) => {
 
 
 export function compareGuess(secret: string, guess: string): Feedback {
-    const result: Feedback = {
-        'dead': 0,
-        'injured': 0 
-    };
+    let dead = 0;
+    let injured = 0;
 
-    const tempResult: boolean[] = Array(4).fill(false);
+    for (let i = 0; i < 4; i++) {
+        if (guess[i] === secret[i]) {
+            dead++;
+        } else if (secret.includes(guess[i])) {
+            injured++;
+        }
+    }
+
+    return {dead, injured};
+}
+
+export function generateComputerGuess(): string {
+  const digits = [...Array(10).keys()].map(String); // ['0', '1', ..., '9']
+  const guess = [];
+
+  while (guess.length < 4) {
+    const randIndex = Math.floor(Math.random() * digits.length);
+    const digit = digits.splice(randIndex, 1)[0];
+
+    /* In the case where first digit can't be '0' (leading zero)
+    if (guess.length === 0 && digit === '0') continue;
+    */
+    guess.push(digit);
+  }
+
+  return guess.join('');
+}
+
+/**
+ * THIS COMPARE GUESS LOGIC IS BETTER FOR WHEN NUMBERS (SECRET OR GUESS) COULD HAVE REPEATING DIGITS
+ * 
+ * ...
+ *  const tempResult: boolean[] = Array(4).fill(false);
 
     const secretArr = secret.split('');
     const guessArr = guess.split('');
@@ -39,22 +69,4 @@ export function compareGuess(secret: string, guess: string): Feedback {
         }
     }
 
-    return result;
-}
-
-export function generateComputerGuess(): string {
-  const digits = [...Array(10).keys()].map(String); // ['0', '1', ..., '9']
-  const guess = [];
-
-  while (guess.length < 4) {
-    const randIndex = Math.floor(Math.random() * digits.length);
-    const digit = digits.splice(randIndex, 1)[0];
-
-    /* In the case where first digit can't be '0' (leading zero)
-    if (guess.length === 0 && digit === '0') continue;
-    */
-    guess.push(digit);
-  }
-
-  return guess.join('');
-}
+ */

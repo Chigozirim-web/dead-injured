@@ -99,7 +99,7 @@ export const GameBoard: FC<GameboardProps> = (props): ReactElement => {
                         <motion.div
                             className="flex gap-4 items-center"
                             initial={{ opacity: 1 }}
-                            animate={computerIsThinking? { opacity: [1, 0.5, 1] } : { opacity: 1 }}
+                            animate={computerIsThinking? { opacity: [1, 0.2, 1] } : { opacity: 1 }}
                             transition={computerIsThinking? { repeat: Infinity , duration: 4, ease: "easeInOut" } : {}}
                         >
                             <span className="text-gray-500 font-semibold text-sm w-15">
