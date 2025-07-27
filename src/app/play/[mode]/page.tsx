@@ -225,7 +225,7 @@ export default function GameModePage() {
   }, [currentPlayer, mode]);
 
   return (
-    <div className='flex flex-col gap-4 p-7 sm:p-7 text-gray-700 font-[family-name:var(--font-geist-sans)]'>
+    <div className='flex flex-col gap-4 w-full max-w-full p-4 mx-auto sm:p-7 text-gray-700 font-[family-name:var(--font-geist-sans)]'>
       <div className="flex flex-col items-center gap-4 mb-5">
         <h2 className="text-2xl font-bold text-gray-800"> {mode === "pvp" ? "Player vs Player" : "Player vs Computer"}</h2>
         {inputDialogOpen && (
@@ -248,23 +248,23 @@ export default function GameModePage() {
       </div>
       <Separator className="mb-4" />
       {!inputDialogOpen && (
-        <div className="flex items-start gap-2 p-2">
-          <div className="w-64 shrink-0 sticky top-4 self-start">
-            <div className="p-5 bg-white shadow rounded-lg mb-5">
+        <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4 p-2">
+          <div className="sm:w-64 mb-15 sm:mb-0 shrink-0 sticky top-4 sm:self-start">
+            <div className="p-5 bg-white shadow rounded-lg mb-3">
               <h2 className="text-md font-semibold mb-2">Guide:</h2>
               <p className="text-sm text-gray-600">
                 Guess the 4-digit number.
               </p>
               <p className="text-sm text-gray-600"> 
-                <code>x dead</code> ➡️ x correct digits in the correct position.
+                <code>x d (dead)</code> ➡️ x correct digits in the correct position.
               </p>
               <p className="text-sm text-gray-600"> 
-                <code>x injured</code> ➡️ x correct digits, but in the wrong position.
+                <code>x inj (injured)</code> ➡️ x correct digits, but in the wrong position.
               </p>
             </div>
             <Button 
               variant="outline" 
-              className="p-2 w-32 transition duration-250 ease-in-out bg-red-400 text-white hover:bg-red-500 hover:text-white hover:scale-110 cursor-pointer"
+              className="p-2 transition duration-250 ease-in-out bg-red-400 text-white hover:bg-red-500 hover:text-white hover:scale-110 cursor-pointer"
             >
               Quit Game
             </Button>

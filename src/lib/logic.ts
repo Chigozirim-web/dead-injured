@@ -4,7 +4,6 @@ export const isUniqueDigits = (input: string) => {
     return /^(?!.*(.).*\1)\d{4}$/.test(input);
 };
 
-
 export function compareGuess(secret: string, guess: string): Feedback {
     let dead = 0;
     let injured = 0;

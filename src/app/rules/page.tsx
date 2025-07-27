@@ -56,17 +56,29 @@ export default function RulesPage() {
             So, for instance, <strong><code>1231</code></strong> is not valid.
           </p>
         </div>
-        <div className="mt-9 text-center text-gray-600">
-          <h3 className="text-md text-sky-900">
+        <div className="mt-9 w-full text-center text-gray-600">
+          <h3 className="text-md text-sky-900 mb-4">
             Got the rules? Now, go ahead and play😊
           </h3>
-          <Link href="/play/pvp" className=" mt-3 inline-block bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition">
-            Player vs Player <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
-          </Link>
-          &nbsp; <strong>OR</strong> &nbsp; 
-          <Link href="/play/pvc" className="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition">
-            Player vs Computer <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
-          </Link>
+          <div className="flex flex-col sm:flex-row sm:justify-center items-center gap-4">
+            <Link
+              href="/play/pvp"
+              className="w-full sm:w-auto bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition text-center"
+            >
+              Player vs Player{" "}
+              <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
+            </Link>
+
+            <span className="font-bold text-gray-700 hidden sm:inline-block">OR</span>
+
+            <Link
+              href="/play/pvc"
+              className="w-full sm:w-auto bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition text-center"
+            >
+              Player vs Computer{" "}
+              <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
+            </Link>
+          </div>
         </div>
         <p className='text-center text-sm mt-4 text-gray-500'>
           May the best guesser win!
