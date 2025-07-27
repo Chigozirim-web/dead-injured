@@ -19,15 +19,15 @@ export default function RulesPage() {
           </li>
           <li className="mb-2">
             <Check size={16} className="inline-block mr-2 text-sky-700" />
-            Receive feedback in the form of "dead" and "injured".
+            Receive feedback in the form of &quot;dead&quot; and &quot;injured&quot;.
           </li>
           <li className="mb-2">
             <Check size={16} className="inline-block mr-2 text-sky-700" />
-            <strong>"Dead"</strong> means a digit is correct and in the right position.
+            <strong>&quot;Dead&quot;</strong> means a digit is correct and in the right position.
           </li>
           <li className="mb-2">
             <Check size={16} className="inline-block mr-2 text-sky-700" />
-            <strong>"Injured"</strong> means a digit is correct but in the wrong position.
+            <strong>&quot;Injured&quot;</strong> means a digit is correct but in the wrong position.
           </li>
           <li className="mb-2">
             <Check size={16} className="inline-block mr-2 text-sky-700" />
