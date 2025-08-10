@@ -1,6 +1,6 @@
 import { PlayerMove, PVPGameState } from '@/lib/types';
 import { db } from './config';
-import { collection, doc, setDoc, updateDoc, getDoc, onSnapshot, DocumentData, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc, getDoc, onSnapshot, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
 
