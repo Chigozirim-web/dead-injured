@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 export type HandleInputFn = (name: string, secret: string) => void;
 
 export type ResultType = 'dead' | 'injured';
@@ -9,25 +11,85 @@ export type Feedback = {
 
 export type Player = 'Player 1' | 'Player 2' | 'Computer';
 
+export type PlayStatus =  "waiting" | "playing" | "finished";
+
+export enum DifficultyLevel {
+    EASY = "easy",
+    MEDIUM = "medium",  
+    HARD = "hard"
+}
+
+export type PlayerState = {
+    id: string;
+    name: string;
+    secretNumber: string;
+}
+
+export type PlayerMove = {
+    playerId: string;
+    guess: string;
+    result: Feedback;
+    id?: string; //maybe use the database id generated when it is added instead of setting it manually in game ??
+    createdAt?: Date| FieldValue;
+}
+
+export type PVPGameState = {
+    player1: PlayerState;
+    player2: PlayerState | null;
+    status: PlayStatus;
+    currentTurn: string; //playerID
+    gameOver: boolean;
+    winner?: string; 
+    showOpponentGuess: boolean; //to show results immediately after guess
+    createdAt: Date;
+}
 
 export type GameOverModalProps = {
     winnerName: string;
     open: boolean;
     onRestart: () => void;
+    isWinner?: boolean; 
+    opponentName?: string;
+    winnerSecret?: string;
 };
 
-export type GameboardProps = {
-    playerType: Player;
+export interface PVPGameBoardProps {
+    gameState: PVPGameState;
+    gameMoves: PlayerMove[];
+    disabled: boolean;
+    myPlayerId: string;
+    submitSuccess: boolean;
+    onGuess: (guess: string) => void;
+    onToggleTurn: (playerId: string) => void; 
+}
+
+export type PVCGameboardProps = {
     playerName: string;
     playerSecret: string;
-    mode: 'pvp' | 'pvc';
+    guesses: string[];
+    feedbacks: Feedback[];
+    currentPlayer: string;
     isComputer: boolean;
     computerIsThinking?: boolean;
     computerGuess?: string;
-    guesses: string[];
-    feedbacks: Feedback[];
     currentFeedback?: Feedback;
     handleGuess: (guess: string) => void;
-    handleToggle: (playerType: Player) => void;
+    handleToggle: () => void;
     //error: string;
 }
+
+export interface PlayerAvatarProps {
+  name: string;
+  isCurrentTurn: boolean;
+  imageUrl?: string;
+};
+
+export type InputDialogProps = {
+    mode: string;
+    handleInput: (name: string, secret: string, difficultyLevel?: DifficultyLevel) => void;
+};
+
+export type QuitGameModalProps = {
+    onClose: () => void;
+    onQuit: () => void;
+};

@@ -36,6 +36,19 @@ export function generateComputerGuess(): string {
   return guess.join('');
 }
 
+// Helper to generate all 4-digit numbers with no repeating digits
+export function generateAllPossibleGuesses(): string[] {
+    const results: string[] = [];
+    for (let i = 0; i < 10000; i++) {
+        const str = i.toString().padStart(4, '0');
+        const unique = new Set(str);
+        if (unique.size === 4) {
+        results.push(str);
+        }
+    }
+    return results;
+}
+
 /**
  * THIS COMPARE GUESS LOGIC IS BETTER FOR WHEN NUMBERS (SECRET OR GUESS) COULD HAVE REPEATING DIGITS
  * 

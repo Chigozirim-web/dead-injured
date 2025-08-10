@@ -1,5 +1,5 @@
 import { FC, ReactElement, useState } from 'react';
-import { GameboardProps } from '@/lib/types';
+import { PVCGameboardProps } from '@/lib/types';
 
 import {
   InputOTP,
@@ -12,12 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
 
-export const GameBoard: FC<GameboardProps> = (props): ReactElement => {
+export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
     const { 
-        playerType, 
-        playerName, 
-        //playerSecret, 
-        //mode, 
+        currentPlayer,
         isComputer, 
         computerIsThinking,
         computerGuess,
@@ -32,21 +29,21 @@ export const GameBoard: FC<GameboardProps> = (props): ReactElement => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleComplete = (val: string) => {
-    if (!isUniqueDigits(val)) {
-        setErrorMessage("Digits must be unique and 4 total.");
-    } else {
-        setErrorMessage("");
-        setCurrentGuess(val);
-        // You can call setCurrentGuess(val) or move to next step
-    }
-  };
+        if (!isUniqueDigits(val)) {
+            setErrorMessage("Digits must be unique and 4 total.");
+        } else {
+            setErrorMessage("");
+            setCurrentGuess(val);
+            // You can call setCurrentGuess(val) or move to next step
+        }
+    };
 
     // Render the game board based on the props
     return (
         <AnimatePresence mode='wait'>
             <div className='flex flex-col items-center w-full max-w-full px-4 sm:px-8 mx-auto'>
                 <motion.div
-                    key={playerType+"_name"}
+                    key={currentPlayer+"_name"}
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
@@ -57,12 +54,12 @@ export const GameBoard: FC<GameboardProps> = (props): ReactElement => {
                         variant="outline"
                         className="border-b-1 border-sky-400 text-sm font-semibold px-4 py-2 text-gray-700"
                     >
-                        {playerName}&apos;s Turn
+                        {currentPlayer}&apos;s Turn
                     </Badge>
                 </motion.div>
 
                 <motion.div
-                    key={playerType+"_gameboard"}
+                    key={currentPlayer+"_gameboard"}
                     initial={{ opacity: 0, x: 100 }} // when appearing
                     animate={{ opacity: 1, x: 0 }}   // while on screen
                     exit={{ opacity: 0, x: -100, scale: 0.95, filter: "blur(4px)" }}   // when exiting
@@ -159,7 +156,7 @@ export const GameBoard: FC<GameboardProps> = (props): ReactElement => {
                     {!isComputer && currentFeedback && (
                         <button 
                             className='mt-5 p-2 bg-green-500 text-white rounded-md cursor-pointer hover:bg-green-600'
-                            onClick={() => { setCurrentGuess(""); handleToggle(playerType); }} 
+                            onClick={() => { setCurrentGuess(""); handleToggle(); }} 
                         >
                             End Turn {/* This button ends the turn and switches to the next player */}
                         </button>

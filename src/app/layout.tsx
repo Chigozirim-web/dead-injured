@@ -36,7 +36,7 @@ export default function RootLayout({
         <div className="relative z-10 flex flex-col min-h-screen bg-white/80 ">
           <NavBar />
 
-          <main className="flex-grow">
+          <main className="flex-grow flex justify-center items-center">
             {children}
           </main>
           <Toaster position="top-center" className="relative z-100" />
