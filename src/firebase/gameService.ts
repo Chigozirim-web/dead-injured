@@ -20,8 +20,7 @@ export const createGame = async (player1Name: string, player1Secret: string) => 
         status: 'waiting',
         gameOver: false,
         showOpponentGuess: false, // Optional, if you want to show results immediately after guess
-        currentTurn: playerId, //player1 starts, but ⬇️
-        //TODO: Implement logic for players to decide who starts, like rolling a dice etc.
+        currentTurn: playerId, //player starts for now BUT➡️ TODO: Implement logic for players to decide who starts, like rolling a dice etc.
         createdAt: new Date(),
     }
 
@@ -37,6 +36,11 @@ export const joinGame = async (gameId: string, name: string, secret: string) => 
 
     if (!snap.exists()) throw new Error('Game not found');
     if (snap.data().player2) throw new Error('Game is full');
+
+    const storedPlayerId = localStorage.getItem("myPlayerId");
+    if (storedPlayerId) {
+        throw new Error('You have already joined this game');
+    }
 
     const myPlayerId = uuidv4();
 

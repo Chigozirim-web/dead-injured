@@ -19,10 +19,10 @@ import {
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import GameOverModal from "@/components/gameOverModal";
 import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -260,22 +260,23 @@ export default function GameModePage() {
       {!inputDialogOpen && (
         <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4 p-2">
           <div className="flex sm:flex-col items-center gap-10 sm:gap-2 mb-10 sm:mb-0 sm:self-start">
-            <HoverCard>
-              <HoverCardTrigger>
+            <Popover>
+              <PopoverTrigger>
                 <div className="flex items-center gap-1 cursor-help">
                   <Info size="18" className="" />
                   <span className="font-semibold">Guide</span>
                 </div>
-              </HoverCardTrigger>
-              <HoverCardContent>
+              </PopoverTrigger>
+              <PopoverContent>
                 <p className="text-sm text-gray-600"> 
                   <code>x d (dead)</code> ➡️ x correct digits in the correct position.
                 </p>
                 <p className="text-sm text-gray-600"> 
                   <code>x inj (injured)</code> ➡️ x correct digits, but in the wrong position.
                 </p>
-              </HoverCardContent>
-            </HoverCard>
+              </PopoverContent>
+            </Popover>
+            
             <Dialog open={quitModalOpen} onOpenChange={setQuitModalOpen}>
               <DialogTrigger asChild>
                 <Button 

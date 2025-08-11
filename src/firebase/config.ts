@@ -19,3 +19,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+
+/**
+ * 
+  apiKey: "AIzaSyCD0xQr_JWYCiEM3LUJuOzM2TQ3W33vAz8",
+  authDomain: "dead-and-injured-57137.firebaseapp.com",
+  projectId: "dead-and-injured-57137",
+  storageBucket: "dead-and-injured-57137.firebasestorage.app",
+  messagingSenderId: "967869790111",
+  appId: "1:967869790111:web:4e42417c7e4c33e8422faa",
+  measurementId: "G-TB7Q1YJ7CN"
+ */

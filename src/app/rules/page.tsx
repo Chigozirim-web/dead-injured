@@ -1,9 +1,19 @@
 import { BicepsFlexed, SquareArrowOutUpRight, BookOpenText, Check } from 'lucide-react';
 import Link from 'next/link';
+import {
+    Dialog,
+    DialogTrigger,
+    DialogClose,
+    DialogHeader,
+    DialogTitle,
+    DialogContent,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function RulesPage() {
   return (
-    <div className="grid grid-rows-[20px_1fr] gap-7 items-center justify-items-center p-10 sm:p-10 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid grid-rows-[20px_1fr] gap-7 items-center justify-items-center p-10 font-[family-name:var(--font-geist-sans)]">
       <h1 className="text-3xl font-bold text-sky-700">
         Rules
         <BookOpenText size={30} className="inline-block ml-2 text-sky-700" />
@@ -61,22 +71,67 @@ export default function RulesPage() {
             Got the rules? Now, go ahead and play😊
           </h3>
           <div className="flex flex-col sm:flex-row sm:justify-center items-center gap-4">
-            <Link
-              href="/play/pvp"
-              className="w-full sm:w-auto bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition text-center"
-            >
-              Player vs Player{" "}
-              <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
-            </Link>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="w-full sm:w-auto bg-sky-600 text-white rounded-lg shadow hover:bg-sky-700 transition text-center hover:text-white cursor-pointer"
+                >
+                  Player vs Player
+                  <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-xl">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-gray-600 p-2 border-b-1 border-gray-400">Welcome to PVP mode!</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center justify-center gap-5 py-4 w-full">
+                  <Link href="/play/pvp/create">
+                    <Button
+                      variant="outline"
+                      className="border-2 border-green-500 text-gray-700 font-bold cursor-pointer"
+                    >
+                      Create New Game
+                    </Button>
+                  </Link>
+                  <span className="font-bold text-gray-700">OR</span> 
+                  <Link href="/play/pvp/join">
+                    <Button 
+                      variant="outline"
+                      className="border-2 border-green-500 text-gray-700 font-bold cursor-pointer"
+                    >
+                      Join Game with Code
+                    </Button>
+                  </Link>
+                  
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild >
+                    <Button 
+                      variant="outline"
+                      className="transition duration-250 ease-in-out bg-red-400 text-white hover:bg-red-500 hover:text-white hover:scale-110 cursor-pointer"
+                    >
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog> 
 
             <span className="font-bold text-gray-700 hidden sm:inline-block">OR</span>
 
             <Link
               href="/play/pvc"
-              className="w-full sm:w-auto bg-sky-600 text-white px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition text-center"
+              className='w-full sm:w-auto'
             >
-              Player vs Computer{" "}
-              <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto bg-sky-600 text-white rounded-lg shadow hover:bg-sky-700 hover:text-white cursor-pointer transition text-center"
+              >
+                 Player vs Computer{" "}
+                <SquareArrowOutUpRight size={16} className="inline-block ml-1" />
+              </Button>
             </Link>
           </div>
         </div>

@@ -8,10 +8,10 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Info } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,7 @@ export default function GameRoomPage() {
     const [winnerName, setWinnerName] = useState("");
 
     const [quitModalOpen, setQuitModalOpen] = useState(false);
+    //const [coinFlipModalOpen, setCoinFlipModalOpen] = useState(false);
 
     useEffect(() => {
         const storedId = localStorage.getItem("myPlayerId");
@@ -69,6 +70,8 @@ export default function GameRoomPage() {
         const myInfo = gameState.player1.id === myPlayerId ? gameState.player1 : gameState.player2;
 
         const opponent = gameState.player1.id === myPlayerId ? gameState.player2 : gameState.player1;
+        
+        //
 
         const handleGuess = async (guess: string) => {
             if (!isMyTurn) return;
@@ -151,22 +154,23 @@ export default function GameRoomPage() {
                 <Separator className="" />
                 <div className="flex flex-col items-center sm:flex-row sm:items-start gap-4 p-2">
                     <div className="flex sm:flex-col items-center gap-10 sm:gap-2 mb-7 sm:mb-0 sm:self-start">
-                        <HoverCard>
-                            <HoverCardTrigger>
+                        <Popover>
+                            <PopoverTrigger>
                                 <div className="flex items-center gap-1 cursor-help">
                                     <Info size="18" className="" />
                                     <span className="font-semibold">Guide</span>
                                 </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent>
+                            </PopoverTrigger>
+                            <PopoverContent>
                                 <p className="text-sm text-gray-600"> 
                                     <code>x d (dead)</code> ➡️ x correct digits in the correct position.
                                 </p>
                                 <p className="text-sm text-gray-600"> 
                                     <code>x inj (injured)</code> ➡️ x correct digits, but in the wrong position.
                                 </p>
-                            </HoverCardContent>
-                        </HoverCard>
+                            </PopoverContent>
+                        </Popover>
+
                         <Dialog open={quitModalOpen} onOpenChange={setQuitModalOpen}>
                             <DialogTrigger asChild>
                                 <Button 

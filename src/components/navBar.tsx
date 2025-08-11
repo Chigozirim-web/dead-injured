@@ -19,7 +19,7 @@ export default function NavBar(){
                         </Link>
                     </div>
                     <div className="flex space-x-4 items-center">
-                        <Link href="/" className="hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <Link href="/" className="hover:text-sky-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             <House size={21} />
                         </Link>
                         
@@ -27,7 +27,7 @@ export default function NavBar(){
                             <Link
                                 key={link.name}
                                 href={link.path}
-                                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                                className="text-gray-700 hover:text-sky-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                             >
                                 {link.name}
                             </Link>

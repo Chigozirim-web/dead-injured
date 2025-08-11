@@ -24,13 +24,13 @@ export default function Home() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mt-10 w-full max-w-md">
         <Dialog>
           <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                type="button"
-                className="border-blue-400 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold hover:text-gray-500 cursor-pointer"
-              >
-                Player vs Player
-              </Button>
+            <Button
+              variant="outline"
+              type="button"
+              className="border-blue-400 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold hover:text-gray-500 cursor-pointer"
+            >
+              Player vs Player
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-xl">
             <DialogHeader>
