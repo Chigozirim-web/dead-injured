@@ -16,7 +16,7 @@ export default function AboutSection() {
                      I loved the thrill of it, so I decided to recreate it as a web app, to be played online.
                  </p>
                 <p className="text-lg/8 text-center text-gray-700 mb-2">
-                    The game is is a fun and interactive way to challenge your friends. <br />
+                    The game is a fun and interactive way to challenge your friends. <br />
                     It is designed to be simple yet engaging, with a focus on strategy and deduction.
                 </p>
             </div>

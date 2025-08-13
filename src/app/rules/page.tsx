@@ -63,7 +63,7 @@ export default function RulesPage() {
           </ul>
           <p className="text-sm text-gray-500 mt-2">
             Note: the number must have non-repeating digits.
-            So, for instance, <strong><code>1231</code></strong> is not valid.
+            For instance, <strong><code>1231</code></strong> is not valid.
           </p>
         </div>
         <div className="mt-9 w-full text-center text-gray-600">
