@@ -151,7 +151,7 @@ export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submi
                                     onClick={() => onGuess(currentGuess)}
                                 >
                                     Submit Guess
-                                    {/* After submitting, this button changes to feedback result. E.g.: 0 dead 2 inj */}
+                                    {/* TODO: Do not submit if number has repeating digit. Implement logic here!! */}
                                 </button>
                             )}
                         </div>

@@ -123,7 +123,7 @@ export const InputDialog = ({ mode, handleInput }: InputDialogProps): ReactEleme
                 >
                     Save changes
                 </Button>
-                {/* TODO: Button saves secret even if it contains repeating digits. Change this...  */}
+                {/* DONE✅ TODO: Button saves secret even if it contains repeating digits. Change this...  */}
             </DialogFooter>
         </DialogContent>  
     );

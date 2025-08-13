@@ -34,13 +34,13 @@ export const joinGame = async (gameId: string, name: string, secret: string) => 
     const ref = doc(db, 'games', gameId);
     const snap = await getDoc(ref);
 
-    if (!snap.exists()) throw new Error('Game not found');
+    if (!snap.exists()) throw new Error('Game not found\n. Make sure the code is entered correctly');
     if (snap.data().player2) throw new Error('Game is full');
 
-    const storedPlayerId = localStorage.getItem("myPlayerId");
+    /*const storedPlayerId = localStorage.getItem("myPlayerId");
     if (storedPlayerId) {
         throw new Error('You have already joined this game');
-    }
+    }*/
 
     const myPlayerId = uuidv4();
 
