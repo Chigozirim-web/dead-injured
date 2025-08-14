@@ -17,12 +17,10 @@ const geistMono = Geist_Mono({
 
 // Lazy-load analytics components only in the browser
 const Analytics = dynamic(
-  () => import("@vercel/analytics/react").then(mod => mod.Analytics),
-  { ssr: false }
+  () => import("@vercel/analytics/react").then(mod => mod.Analytics)
 );
 const SpeedInsights = dynamic(
-  () => import("@vercel/speed-insights/next").then(mod => mod.SpeedInsights),
-  { ssr: false }
+  () => import("@vercel/speed-insights/next").then(mod => mod.SpeedInsights)
 );
 
 export const metadata: Metadata = {
