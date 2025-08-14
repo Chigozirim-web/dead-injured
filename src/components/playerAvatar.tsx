@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { PlayerAvatarProps } from "@/lib/types";
 
-export function PlayerAvatar({ name, isCurrentTurn}: PlayerAvatarProps) {
+export default function PlayerAvatar({ name, isCurrentTurn}: PlayerAvatarProps) {
     const initials = name
         ? name.slice(0, 2).toUpperCase()
         : "?";

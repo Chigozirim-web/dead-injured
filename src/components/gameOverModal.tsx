@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { GameOverModalProps } from '@/lib/types';
-
-import Confetti from "react-confetti";
+import dynamic from 'next/dynamic';
 import { useWindowSize } from 'react-use'// optional hook for auto size
+
+const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
 
 export default function GameOverModal({ winnerName, open, onRestart, isWinner, winnerSecret }: GameOverModalProps) {
     const { width, height } = useWindowSize();

@@ -43,6 +43,10 @@ export default function RulesPage() {
             <Check size={16} className="inline-block mr-2 text-sky-700" />
             First to guess the number wins!
           </li>
+          <li className="mb-2">
+            <Check size={16} className="inline-block mr-2 text-sky-700" />
+            Tip: When setting your secret number, try not to choose one that is too easy to guess.
+          </li>
         </ul>
         <div className='bg-gray-50 p-5 mt-6 text-md rounded-lg shadow-sm'>
           <h3 className="mb-4 font-bold text-sky-700">Example Game Play</h3>

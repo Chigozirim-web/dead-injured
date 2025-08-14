@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { listenToGame, listenToMoves, submitGuess, toggleTurn, winGame } from '@/firebase/gameService';
 import { PlayerMove, PVPGameState } from '@/lib/types';
 import {
@@ -18,9 +19,15 @@ import { Button } from '@/components/ui/button';
 import { PVPGameBoard } from '@/components/pvpGameBoard';
 import { compareGuess } from '@/lib/logic';
 import { toast } from 'sonner';
-import GameOverModal from '@/components/gameOverModal';
-import { PlayerAvatar } from '@/components/playerAvatar';
 import { QuitGameModal } from '@/components/quitGameModal';
+    
+const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
+    ssr: false,
+});
+
+const PlayerAvatar = dynamic(() => import('@/components/playerAvatar'), {
+    ssr: false,
+});
 
 export default function GameRoomPage() {
     const { gameId } = useParams();

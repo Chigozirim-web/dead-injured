@@ -8,6 +8,39 @@ export function compareGuess(secret: string, guess: string): Feedback {
     let dead = 0;
     let injured = 0;
 
+    const secretUsed = Array(secret.length).fill(false);
+    const guessUsed = Array(guess.length).fill(false);
+
+    // First pass — count dead (exact matches)
+    for (let i = 0; i < 4; i++) {
+        if (guess[i] === secret[i]) {
+            dead++;
+            secretUsed[i] = true;
+            guessUsed[i] = true;
+        }
+    }
+
+    // Second pass — count injured (right digit, wrong place)
+    for (let i = 0; i < 4; i++) {
+        if (!guessUsed[i]) {
+            for (let j = 0; j < 4; j++) {
+                if (!secretUsed[j] && guess[i] === secret[j]) {
+                    injured++;
+                    secretUsed[j] = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return { dead, injured };
+}
+/*
+THIS version is slightly 'too permissive', so it's been changed to the one above
+export function compareGuess(secret: string, guess: string): Feedback {
+    let dead = 0;
+    let injured = 0;
+
     for (let i = 0; i < 4; i++) {
         if (guess[i] === secret[i]) {
             dead++;
@@ -18,6 +51,7 @@ export function compareGuess(secret: string, guess: string): Feedback {
 
     return {dead, injured};
 }
+*/
 
 export function generateComputerGuess(): string {
   const digits = [...Array(10).keys()].map(String); // ['0', '1', ..., '9']

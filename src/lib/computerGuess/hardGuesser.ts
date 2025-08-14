@@ -65,5 +65,6 @@ export class HardComputerGuesser {
 
     reset() {
         this.possibleCodes = [...this.allCodes];
+        this.lastGuess = '';
     }
 }

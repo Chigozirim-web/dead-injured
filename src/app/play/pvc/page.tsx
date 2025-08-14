@@ -1,12 +1,12 @@
 'use client'
 import { useRouter } from "next/navigation";
+import dynamic from 'next/dynamic';
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { Player, Feedback, PVCGameboardProps, DifficultyLevel } from "@/lib/types";
 import { compareGuess, generateComputerGuess } from "@/lib/logic";
 import { EasyComputerGuesser } from "@/lib/computerGuess/easyGuesser";
-import { MediumComputerGuesser } from "@/lib/computerGuess/MediumGuesser";
+import { MediumComputerGuesser } from "@/lib/computerGuess/mediumGuesser";
 import { HardComputerGuesser } from "@/lib/computerGuess/hardGuesser";
-
 
 import { InputDialog } from "@/components/inputDialog";
 import { PVCGameBoard } from "@/components/gameBoard";
@@ -23,11 +23,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import GameOverModal from "@/components/gameOverModal";
 import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { QuitGameModal } from "@/components/quitGameModal";
- 
+
+const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
+  ssr: false,
+});
+
 export default function GameModePage() {
   const router = useRouter();
   
@@ -99,7 +102,7 @@ export default function GameModePage() {
     setQuitModalOpen(false);
     restartGame();
     router.push('/');
-  }, []);
+  }, [router]);
 
   /* Handle Player Guesses */
   const handleGuess: (guess: string) => void = useCallback((guess: string) => {
