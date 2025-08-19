@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
 import { toast } from 'sonner';
 
-export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
+const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
     const { 
         currentPlayer,
         isComputer, 
@@ -103,8 +103,6 @@ export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
                         </div> 
                     ))}
 
-                    {/* TODO: keep working on pvc game logic*/}
-
                     {isComputer ? (
                         <motion.div
                             className="flex gap-4 items-center"
@@ -160,7 +158,6 @@ export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
                                 onClick={() => onGuess(currentGuess)}
                             >
                                 Submit Guess
-                                 {/* TODO: Do not submit if number has repeating digit. Implement logic here!! */}
                             </button>
                             )}
                         </div>
@@ -179,3 +176,5 @@ export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
         </AnimatePresence>
     )
 };
+
+export default PVCGameBoard;

@@ -12,7 +12,7 @@ import { PlayerMove, PVPGameBoardProps } from '@/lib/types';
 import { toast } from 'sonner';
 
 
-export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSuccess, onGuess, onToggleTurn }: PVPGameBoardProps) => {
+const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSuccess, onGuess, onToggleTurn }: PVPGameBoardProps) => {
     const [currentGuess, setCurrentGuess] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [latestOpponentMove, setLatestOpponentMove] = useState<PlayerMove | null>(null);
@@ -164,7 +164,7 @@ export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submi
                                     onClick={() => handleGuess(currentGuess)}
                                 >
                                     Submit Guess
-                                    {/* TODO: Do not submit if number has repeating digit. Implement logic here!! */}
+                                    {/*DONE✅ TODO: Do not submit if number has repeating digit. Implement logic here!! */}
                                 </button>
                             )}
                         </div>
@@ -182,4 +182,6 @@ export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submi
             </div>
         </AnimatePresence>
     );
-}
+};
+
+export default PVPGameBoard;

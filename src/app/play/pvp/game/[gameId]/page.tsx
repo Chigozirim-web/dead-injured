@@ -16,7 +16,6 @@ import {
 import { Info } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { PVPGameBoard } from '@/components/pvpGameBoard';
 import { compareGuess } from '@/lib/logic';
 import { toast } from 'sonner';
 import { QuitGameModal } from '@/components/quitGameModal';
@@ -27,6 +26,10 @@ const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
 
 const PlayerAvatar = dynamic(() => import('@/components/playerAvatar'), {
     ssr: false,
+});
+
+const PVPGameBoard = dynamic(() => import('@/components/pvpGameBoard'), {
+    ssr: false
 });
 
 export default function GameRoomPage() {
