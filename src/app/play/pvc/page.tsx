@@ -143,7 +143,7 @@ export default function GameModePage() {
     setCurrentPlayer("Computer");
 
     // tiny delay to show “thinking…”
-    await new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, 2500));
 
     try {
       let guess = "";
@@ -184,7 +184,7 @@ export default function GameModePage() {
           setCurrentPlayer("Player 1");
           setCurrentGuess("");
           setCurrentFeedback(undefined);
-        }, 2500)
+        }, 2000)
       }
       
     } catch (err) {
