@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { GameOverModalProps } from '@/lib/types';
@@ -9,14 +9,31 @@ const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
 
 export default function GameOverModal({ winnerName, open, onRestart, isWinner, winnerSecret }: GameOverModalProps) {
     const { width, height } = useWindowSize();
+    // Keep track of audio instance
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         if (open) {
             const audioPath = isWinner ? "/sounds/victory.mp3" : "/sounds/fail.mp3";
             const audio = new Audio(audioPath);
+            audio.volume = 0.75;
             audio.play().catch((err) => console.error("Sound error:", err));
+            audioRef.current = audio;
+        } else{
+            if(audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
         }
     }, [isWinner, open]);
+
+    const handleRestart = () => {
+        if(audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+        onRestart();
+    };
 
     return (
         <AnimatePresence>
@@ -54,7 +71,7 @@ export default function GameOverModal({ winnerName, open, onRestart, isWinner, w
                             </div>
                         }
                        
-                        <Button onClick={onRestart} className="bg-green-500 hover:bg-green-600 text-white cursor-pointer">
+                        <Button onClick={handleRestart} className="bg-green-500 hover:bg-green-600 text-white cursor-pointer">
                             Play Again
                         </Button>
                     </motion.div>

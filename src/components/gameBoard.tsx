@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
+import { toast } from 'sonner';
 
 export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
     const { 
@@ -37,6 +38,18 @@ export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
             // You can call setCurrentGuess(val) or move to next step
         }
     };
+
+    const onGuess = (guess: string) => {
+        if(!guess) {
+            toast("Please enter a guess");
+            return;
+        }
+        if (!isUniqueDigits(guess)) {
+            setErrorMessage("Secret must be a 4-digit number with unique digits.");
+            return;
+        }
+        handleGuess(guess)
+    }
 
     // Render the game board based on the props
     return (
@@ -144,7 +157,7 @@ export const PVCGameBoard: FC<PVCGameboardProps> = (props): ReactElement => {
                             {!currentFeedback && (
                             <button 
                                 className='px-2 py-1 text-sm bg-sky-500 text-white rounded-lg cursor-pointer hover:bg-sky-600'
-                                onClick={() => handleGuess(currentGuess)}
+                                onClick={() => onGuess(currentGuess)}
                             >
                                 Submit Guess
                                  {/* TODO: Do not submit if number has repeating digit. Implement logic here!! */}

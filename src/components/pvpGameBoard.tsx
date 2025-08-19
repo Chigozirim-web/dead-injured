@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/input-otp";
 import { Badge } from "@/components/ui/badge";
 import { PlayerMove, PVPGameBoardProps } from '@/lib/types';
+import { toast } from 'sonner';
 
 
 export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSuccess, onGuess, onToggleTurn }: PVPGameBoardProps) => {
@@ -31,6 +32,18 @@ export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submi
             // You can call setCurrentGuess(val) or move to next step
         }
     };
+
+    const handleGuess = (guess: string) => {
+        if(!guess) {
+            toast("Please enter a guess");
+            return;
+        }
+        if (!isUniqueDigits(guess)) {
+            setErrorMessage("Secret must be a 4-digit number with unique digits.");
+            return;
+        }
+        onGuess(guess)
+    }
 
     useEffect(() => {
         const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
@@ -148,7 +161,7 @@ export const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submi
                             {!submitSuccess && (
                             <button 
                                     className='px-2 py-1 text-sm bg-sky-500 text-white rounded-lg cursor-pointer hover:bg-sky-600'
-                                    onClick={() => onGuess(currentGuess)}
+                                    onClick={() => handleGuess(currentGuess)}
                                 >
                                     Submit Guess
                                     {/* TODO: Do not submit if number has repeating digit. Implement logic here!! */}

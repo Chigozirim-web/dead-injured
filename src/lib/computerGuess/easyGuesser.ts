@@ -14,7 +14,6 @@ export class EasyComputerGuesser {
     }
 
     makeGuess(): string {
-        console.log("I am EasyComputerGuesser, making a guess...");
         // Make first guess = '0123'
         if (this.possibleCodes.length === this.allCodes.length) {
             return '0123';

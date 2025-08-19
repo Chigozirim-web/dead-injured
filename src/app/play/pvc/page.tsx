@@ -6,7 +6,7 @@ import { Player, Feedback, PVCGameboardProps, DifficultyLevel } from "@/lib/type
 import { compareGuess, generateComputerGuess } from "@/lib/logic";
 import { EasyComputerGuesser } from "@/lib/computerGuess/easyGuesser";
 import { MediumComputerGuesser } from "@/lib/computerGuess/mediumGuesser";
-import { HardComputerGuesser } from "@/lib/computerGuess/hardGuesser";
+//import { HardComputerGuesser } from "@/lib/computerGuess/hardGuesser";
 
 import { InputDialog } from "@/components/inputDialog";
 import { PVCGameBoard } from "@/components/gameBoard";
@@ -23,9 +23,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { QuitGameModal } from "@/components/quitGameModal";
+import { Info } from "lucide-react";
+import { useKnuthWorker } from "@/hooks/useKnuthWorker";
 
 const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
   ssr: false,
@@ -33,27 +34,29 @@ const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
 
 export default function GameModePage() {
   const router = useRouter();
-  
-  const computerGuesserRef = useRef(null as MediumComputerGuesser | HardComputerGuesser | EasyComputerGuesser | null  );
+
+  const computerGuesserRef = useRef(null as MediumComputerGuesser | EasyComputerGuesser | null  );
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(); // default difficulty
   const [difficultyColor, setDifficultyColor] = useState<string>("");
-
-  useEffect(() => {
-    if(difficulty === DifficultyLevel.EASY) {
-      computerGuesserRef.current = new EasyComputerGuesser();
-    } else if(difficulty === DifficultyLevel.MEDIUM) {
-      computerGuesserRef.current = new MediumComputerGuesser();
-    } else if(difficulty === DifficultyLevel.HARD) {
-      computerGuesserRef.current = new HardComputerGuesser();
-    } else {  
-      computerGuesserRef.current = new MediumComputerGuesser(); // Default to Medium
-    }
-  }, [difficulty])
+  
+  const { ready, getNextGuess, updateByFeedback, reset } = useKnuthWorker();
   
   const [player1, setPlayer1] = useState('');
-
   const [player1Secret, setPlayer1Secret] = useState("");
   const [computerSecret, setComputerSecret] = useState(""); // or generated
+
+  useEffect(() => {
+  if (difficulty === DifficultyLevel.EASY) {
+    computerGuesserRef.current = new EasyComputerGuesser();
+  } else if (difficulty === DifficultyLevel.MEDIUM) {
+    computerGuesserRef.current = new MediumComputerGuesser();
+  } else if (difficulty === DifficultyLevel.HARD) {
+    // Worker handles HARD; no class instance needed.
+    computerGuesserRef.current = null;
+  } else {
+    computerGuesserRef.current = new MediumComputerGuesser();
+  }
+}, [difficulty]);
 
   const [inputDialogOpen, setInputDialogOpen] = useState(true);
   const [open, setOpen] = useState(false);
@@ -74,7 +77,7 @@ export default function GameModePage() {
   const [currentFeedback, setCurrentFeedback] = useState<Feedback>();
 
   /* Handle Game Restart */
-  function restartGame() {
+  const restartGame: () => void = useCallback(() => {
     setGameOver(false);
     setPlayer1("");
     setPlayer1Secret("");
@@ -91,7 +94,8 @@ export default function GameModePage() {
     setDifficulty(undefined);
     setDifficultyColor("");
     computerGuesserRef.current?.reset();
-  }
+    if(difficulty === DifficultyLevel.HARD) reset();
+  }, [difficulty, reset])
 
   /*Handle Closing the QuitGame Modal */
   const handleCloseQuitModal = useCallback(() => {
@@ -102,7 +106,7 @@ export default function GameModePage() {
     setQuitModalOpen(false);
     restartGame();
     router.push('/');
-  }, [router]);
+  }, [restartGame, router]);
 
   /* Handle Player Guesses */
   const handleGuess: (guess: string) => void = useCallback((guess: string) => {
@@ -125,7 +129,6 @@ export default function GameModePage() {
 
     //Check win
     if (feedback.dead === 4) {
-      //const currentName = currentPlayer === 'Player 1' ? player1 : player2;
       setWinnerName(player1);
       setGameOver(true);
       setCurrentFeedback(undefined);
@@ -133,48 +136,63 @@ export default function GameModePage() {
     }
   }, [computerSecret, currentPlayer, player1]);
 
-/* Switch Player Turns */
-  const toggleTurn: () => void = useCallback(() => {
-    // PvC: simulate computer move
+  /* Switch Player Turns */
+  // IMPORTANT: make HARD async and wait for worker
+  const toggleTurn = useCallback(async () => {
     setComputerIsThinking(true);
-    setCurrentPlayer('Computer');
+    setCurrentPlayer("Computer");
 
-    setTimeout(() => {
-      const computerGuess = computerGuesserRef.current?.makeGuess();
-      if (computerGuess) {
-        const compFeedback = compareGuess(player1Secret, computerGuess);
-        computerGuesserRef.current?.updatePossibleSecrets(computerGuess, compFeedback);
-        
-        setComputerIsThinking(false);
-        setCurrentGuess(computerGuess);
-        setCurrentFeedback(compFeedback);
-        setGuesses(prev => ({
-          ...prev,
-          ['Computer']: [...(prev['Computer'] || []), computerGuess],
-        }));
-          setFeedbacks(prev => ({
-          ...prev,
-          ['Computer']: [...(prev['Computer'] || []), compFeedback],
-        }));
+    // tiny delay to show “thinking…”
+    await new Promise((r) => setTimeout(r, 3000));
 
-        setTimeout(() => {
-          if(compFeedback.dead === 4) {
-            setWinnerName("Computer");
-            setGameOver(true);
-          }else {
-            setCurrentPlayer('Player 1');
-            setCurrentGuess("");
-            setCurrentFeedback(undefined);
-          }
-        }, 1500);
-      }else {
-        toast("An Internal error occured.\nAn issue with computer-guess function ")
+    try {
+      let guess = "";
+
+      if (difficulty === DifficultyLevel.HARD) {
+        if (!ready) {
+          // if user clicked super fast before worker ready, wait a bit
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        const isFirst = (guesses["Computer"]?.length || 0) === 0;
+        guess = await getNextGuess(isFirst);   // <-- WAIT for worker
+      } else {
+        guess = computerGuesserRef.current?.makeGuess?.() ?? "";
       }
-    }, 4000);
 
-    setCurrentGuess("");
-    setCurrentFeedback(undefined);
-  }, [player1Secret]);
+      const fb = compareGuess(player1Secret, guess);
+
+      if (difficulty === DifficultyLevel.HARD) {
+        updateByFeedback(guess, fb);           // narrow candidate set in worker
+      } else {
+        computerGuesserRef.current?.updatePossibleSecrets?.(guess, fb);
+      }
+
+      setCurrentGuess(guess);
+      setCurrentFeedback(fb);
+      setGuesses((p) => ({ ...p, Computer: [...(p.Computer || []), guess] }));
+      setFeedbacks((p) => ({ ...p, Computer: [...(p.Computer || []), fb] }));
+      setComputerIsThinking(false);
+
+      // Finish turn after showing feedback briefly
+      if(fb.dead === 4) {
+        setTimeout(() => {
+          setWinnerName("Computer");
+          setGameOver(true);
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          setCurrentPlayer("Player 1");
+          setCurrentGuess("");
+          setCurrentFeedback(undefined);
+        }, 2500)
+      }
+      
+    } catch (err) {
+      console.error(err);
+      setComputerIsThinking(false);
+      toast("Computer had an issue thinking of a guess.");
+    }
+  }, [difficulty, ready, guesses, player1Secret, getNextGuess, updateByFeedback]);
 
   const gameBoard = useMemo<PVCGameboardProps>(() => ({
     playerName: player1,
