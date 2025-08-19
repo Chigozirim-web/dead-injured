@@ -9,7 +9,6 @@ import { MediumComputerGuesser } from "@/lib/computerGuess/mediumGuesser";
 //import { HardComputerGuesser } from "@/lib/computerGuess/hardGuesser";
 
 import { InputDialog } from "@/components/inputDialog";
-import { PVCGameBoard } from "@/components/gameBoard";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +30,11 @@ import { useKnuthWorker } from "@/hooks/useKnuthWorker";
 const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
   ssr: false,
 });
+
+const PVCGameBoard = dynamic(() => import('@/components/gameBoard'), {
+    ssr: false
+});
+
 
 export default function GameModePage() {
   const router = useRouter();
