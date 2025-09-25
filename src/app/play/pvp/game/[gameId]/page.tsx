@@ -45,13 +45,19 @@ export default function GameRoomPage() {
 
     const [quitModalOpen, setQuitModalOpen] = useState(false);
     //const [coinFlipModalOpen, setCoinFlipModalOpen] = useState(false);
+    
+    const storedId = localStorage.getItem("myPlayerId");
+    if (storedId) {
+        setMyPlayerId(storedId);
+    }
 
-    useEffect(() => {
+    /*useEffect(() => {
         const storedId = localStorage.getItem("myPlayerId");
         if (storedId) {
             setMyPlayerId(storedId);
         }
     }, []);
+    */
 
     useEffect(() => {
         if (!gameId) return;

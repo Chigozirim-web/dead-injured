@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
@@ -45,10 +45,14 @@ const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSucces
         onGuess(guess)
     }
 
-    useEffect(() => {
+    const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
+    setLatestOpponentMove(mostRecent);
+
+    /* useEffect(() => {
         const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
         setLatestOpponentMove(mostRecent);
     }, [gameMoves, myPlayerId, opponentMoves]);
+    */
 
     return (
         <AnimatePresence mode='wait'>
