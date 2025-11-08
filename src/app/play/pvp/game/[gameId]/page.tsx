@@ -46,10 +46,6 @@ export default function GameRoomPage() {
     const [quitModalOpen, setQuitModalOpen] = useState(false);
     //const [coinFlipModalOpen, setCoinFlipModalOpen] = useState(false);
     
-    const storedId = localStorage.getItem("myPlayerId");
-    if (storedId) {
-        setMyPlayerId(storedId);
-    }
 
     /*useEffect(() => {
         const storedId = localStorage.getItem("myPlayerId");
@@ -60,6 +56,13 @@ export default function GameRoomPage() {
     */
 
     useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedId = localStorage.getItem("myPlayerId");
+            if (storedId) {
+                setMyPlayerId(storedId);
+            }
+        }
+
         if (!gameId) return;
 
         const unsubscribeGame = listenToGame(gameId as string, setGameState);
@@ -68,7 +71,8 @@ export default function GameRoomPage() {
         console.log("Winner Name:", winnerName);    
         return () => {
             unsubscribeGame();
-            unsubscribeMoves()
+            unsubscribeMoves();
+            localStorage.removeItem("myPlayerId");
         } 
     }, [gameId, winnerName]);
 

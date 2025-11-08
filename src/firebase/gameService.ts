@@ -25,7 +25,10 @@ export const createGame = async (player1Name: string, player1Secret: string) => 
     }
 
     await setDoc(doc(gamesRef, gameId), gameProps);
-    localStorage.setItem("myPlayerId", playerId);
+     if (typeof window !== 'undefined') { 
+        localStorage.setItem("myPlayerId", playerId);
+     };
+    
 
     return gameId;
 };
@@ -48,8 +51,11 @@ export const joinGame = async (gameId: string, name: string, secret: string) => 
         player2: { id: myPlayerId, name: name, secretNumber: secret, isThinking: false },
         status: 'playing',
     });
-
-    localStorage.setItem("myPlayerId", myPlayerId);
+    
+    if (typeof window !== 'undefined') {
+        localStorage.setItem("myPlayerId", myPlayerId);
+    };
+    
 };
 
 export const toggleTurn = async (gameId: string, playerId: string) => {
