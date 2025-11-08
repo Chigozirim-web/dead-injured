@@ -29,7 +29,6 @@ export const createGame = async (player1Name: string, player1Secret: string) => 
         localStorage.setItem("myPlayerId", playerId);
      };
     
-
     return gameId;
 };
 
@@ -51,7 +50,7 @@ export const joinGame = async (gameId: string, name: string, secret: string) => 
         player2: { id: myPlayerId, name: name, secretNumber: secret, isThinking: false },
         status: 'playing',
     });
-    
+
     if (typeof window !== 'undefined') {
         localStorage.setItem("myPlayerId", myPlayerId);
     };

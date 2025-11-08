@@ -25,6 +25,7 @@ export default function CreateGamePage() {
         setOpen(false);
         setGameCreated(true);
         const gameId = await createGame(name, secret);
+        console.log("Created game with ID:", gameId);
         setGameCode(gameId);
         //router.push(`/play/pvp/game/${gameId}`);
     }, []);

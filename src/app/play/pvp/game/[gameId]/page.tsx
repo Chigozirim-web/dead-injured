@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { listenToGame, listenToMoves, submitGuess, toggleTurn, winGame } from '@/firebase/gameService';
 import { PlayerMove, PVPGameState } from '@/lib/types';
@@ -34,6 +34,10 @@ const PVPGameBoard = dynamic(() => import('@/components/pvpGameBoard'), {
 
 export default function GameRoomPage() {
     const { gameId } = useParams();
+    if (!gameId) {
+        notFound();
+    };
+    
     const router = useRouter();
 
     const [gameState, setGameState] = useState<PVPGameState>();
@@ -62,6 +66,7 @@ export default function GameRoomPage() {
                 setMyPlayerId(storedId);
             }
         }
+        console.log("gameId:", gameId);
 
         if (!gameId) return;
 
