@@ -1,3 +1,4 @@
+'use client';
 import { ReactElement, useState } from 'react';
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { isUniqueDigits } from "@/lib/logic";

@@ -1,3 +1,4 @@
+'use client';
 import { PlayerMove, PVPGameState } from '@/lib/types';
 import { db } from './config';
 import { collection, doc, setDoc, updateDoc, getDoc, onSnapshot, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
@@ -25,10 +26,10 @@ export const createGame = async (player1Name: string, player1Secret: string) => 
     }
 
     await setDoc(doc(gamesRef, gameId), gameProps);
-     if (typeof window !== 'undefined') { 
+    if (typeof window !== 'undefined') { 
         localStorage.setItem("myPlayerId", playerId);
-     };
-    
+    };
+    console.log("Game created in Firebase with ID:", gameId);
     return gameId;
 };
 

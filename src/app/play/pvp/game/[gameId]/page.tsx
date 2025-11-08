@@ -77,7 +77,7 @@ export default function GameRoomPage() {
         return () => {
             unsubscribeGame();
             unsubscribeMoves();
-            localStorage.removeItem("myPlayerId");
+            //localStorage.removeItem("myPlayerId");
         } 
     }, [gameId, winnerName]);
 

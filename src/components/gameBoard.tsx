@@ -1,3 +1,4 @@
+'use client';
 import { FC, ReactElement, useState } from 'react';
 import { PVCGameboardProps } from '@/lib/types';
 

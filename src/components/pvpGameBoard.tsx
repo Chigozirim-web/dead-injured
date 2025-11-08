@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { AnimatePresence, motion } from "motion/react"
