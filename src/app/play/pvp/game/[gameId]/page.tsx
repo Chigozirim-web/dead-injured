@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { listenToGame, listenToMoves, submitGuess, toggleTurn, winGame } from '@/firebase/gameService';
 import { PlayerMove, PVPGameState } from '@/lib/types';
@@ -35,7 +35,7 @@ const PVPGameBoard = dynamic(() => import('@/components/pvpGameBoard'), {
 export default function GameRoomPage() {
     const { gameId } = useParams();
     if (!gameId) {
-        notFound();
+        return <h2>Invalid game link.</h2>;
     };
     
     const router = useRouter();
@@ -44,12 +44,9 @@ export default function GameRoomPage() {
     const [gameMoves, setGameMoves] = useState<PlayerMove[]>([]);
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
-    
-    const [winnerName, setWinnerName] = useState("");
 
     const [quitModalOpen, setQuitModalOpen] = useState(false);
     //const [coinFlipModalOpen, setCoinFlipModalOpen] = useState(false);
-    
 
     /*useEffect(() => {
         const storedId = localStorage.getItem("myPlayerId");
@@ -66,20 +63,18 @@ export default function GameRoomPage() {
                 setMyPlayerId(storedId);
             }
         }
-        console.log("gameId:", gameId);
 
         if (!gameId) return;
 
         const unsubscribeGame = listenToGame(gameId as string, setGameState);
         const unsubscribeMoves = listenToMoves(gameId as string, setGameMoves);
-
-        console.log("Winner Name:", winnerName);    
+   
         return () => {
             unsubscribeGame();
             unsubscribeMoves();
             //localStorage.removeItem("myPlayerId");
         } 
-    }, [gameId, winnerName]);
+    }, [gameId]);
 
     if (!myPlayerId) {
         return <h2 className='font-bold'>Please start or join a game first.</h2>;
@@ -96,7 +91,13 @@ export default function GameRoomPage() {
 
         const opponent = gameState.player1.id === myPlayerId ? gameState.player2 : gameState.player1;
         
-        //
+        const winnerName =
+            gameState.gameOver && gameState.winner
+                ? gameState.winner === myPlayerId
+                    ? myInfo.name
+                    : opponent.name
+                : "";
+
 
         const handleGuess = async (guess: string) => {
             if (!isMyTurn) return;
@@ -118,7 +119,7 @@ export default function GameRoomPage() {
                 if(feedback.dead === 4) {
                     try {  
                         await winGame(gameId as string, myPlayerId);
-                        setWinnerName(gameState.player1.id === myPlayerId ? gameState.player1.name : gameState.player2?.name || "Unknown");
+                        //setWinnerName(gameState.player1.id === myPlayerId ? gameState.player1.name : gameState.player2?.name || "Unknown");
                     } catch (error) {
                         console.error("Error winning game:", error);
                         toast.error("Failed to declare winner. Please try again.");
@@ -149,7 +150,7 @@ export default function GameRoomPage() {
         };
 
         const startNewGame = () => {
-            setWinnerName("");
+            //setWinnerName("");
             setSubmitSuccess(false);
             setMyPlayerId(null);
             localStorage.removeItem("myPlayerId");
@@ -224,14 +225,16 @@ export default function GameRoomPage() {
                         />
                     </div>
                 </div>   
-                <GameOverModal
-                    winnerName={gameState.winner === myPlayerId ? myInfo.name : opponent.name}
-                    open={gameState.gameOver}
-                    onRestart={startNewGame}
-                    isWinner={gameState.winner === myPlayerId}
-                    opponentName={opponent.name}
-                    winnerSecret={opponent.secretNumber}
-                />  
+                {gameState.gameOver && (
+                    <GameOverModal
+                        winnerName={winnerName}
+                        open
+                        onRestart={startNewGame}
+                        isWinner={gameState.winner === myPlayerId}
+                        opponentName={opponent.name}
+                        winnerSecret={opponent.secretNumber}
+                    />
+                )}
             </div>
         );
     }

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
@@ -16,13 +16,15 @@ import { toast } from 'sonner';
 const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSuccess, onGuess, onToggleTurn }: PVPGameBoardProps) => {
     const [currentGuess, setCurrentGuess] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [latestOpponentMove, setLatestOpponentMove] = useState<PlayerMove | null>(null);
-
+    
+    const isMyTurn = gameState.currentTurn === myPlayerId;
     const currentPlayer = gameState.currentTurn === gameState.player1.id ? gameState.player1 : gameState.player2;
     const opponent = gameState.player1.id === myPlayerId ? gameState.player2 : gameState.player1;
     
     //const myMoves = gameMoves.filter(m => m.playerId === myPlayerId);
     const opponentMoves = gameMoves.filter(m => m.playerId !== myPlayerId);
+    const latestOpponentMove = opponentMoves.at(-1) ?? null;
+
 
     const handleComplete = (val: string) => {
         if (!isUniqueDigits(val)) {
@@ -46,13 +48,13 @@ const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSucces
         onGuess(guess)
     }
 
-    const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
+    /*const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
     setLatestOpponentMove(mostRecent);
-
-    /* useEffect(() => {
-        const mostRecent = opponentMoves[opponentMoves.length - 1] || null;
+    
+    useEffect(() => {
+        const mostRecent = opponentMoves.at(-1) ?? null;
         setLatestOpponentMove(mostRecent);
-    }, [gameMoves, myPlayerId, opponentMoves]);
+    }, [opponentMoves]);
     */
 
     return (
@@ -178,7 +180,10 @@ const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSucces
                     {submitSuccess && (
                         <button 
                             className='mt-5 p-2 bg-green-500 text-white rounded-md cursor-pointer hover:bg-green-600'
-                            onClick={() => { setCurrentGuess(""); onToggleTurn(opponent?.id || ""); }} 
+                            onClick={() => { 
+                                setCurrentGuess(""); 
+                                onToggleTurn(opponent?.id || ""); 
+                            }} 
                         >
                             End Turn {/* This button ends the turn and switches to the next player */}
                         </button>
