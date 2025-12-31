@@ -12,7 +12,6 @@ export class MediumComputerGuesser {
     }
 
     makeGuess(): string {
-        //console.log("I am MediumComputerGuesser, making a guess...");
         //Make first guess = '0123'
         if (this.possibleCodes.length === this.allCodes.length) {
             return '0123';

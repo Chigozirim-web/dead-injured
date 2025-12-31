@@ -29,7 +29,6 @@ export const createGame = async (player1Name: string, player1Secret: string) => 
     if (typeof window !== 'undefined') { 
         localStorage.setItem("myPlayerId", playerId);
     };
-    console.log("Game created in Firebase with ID:", gameId);
     return gameId;
 };
 
