@@ -7,7 +7,7 @@ A web-based number guessing game played with **4-digit secret numbers (no repeat
 Live demo: https://dead-injured-three.vercel.app/
 
 ## Why I built this
-In high school, friends and I played “Dead & Injured” on paper—trying to deduce each other’s secret number through logic. I rebuilt it as a web app so it can be played online, cross-device, and in real time.
+In high school, friends and I played “Dead & Injured” on paper, trying to deduce each other’s secret number through logic. I rebuilt it as a web app so it can be played online, cross-device, and in real time.
 
 ## Features
 - Real-time multiplayer gameplay (PvP)
