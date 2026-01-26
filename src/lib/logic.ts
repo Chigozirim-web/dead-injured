@@ -1,6 +1,7 @@
 import { Feedback } from "./types";
 
 export const isUniqueDigits = (input: string) => {
+    // Ensures exactly 4 digits with no repeated digit
     return /^(?!.*(.).*\1)\d{4}$/.test(input);
 };
 
@@ -11,7 +12,7 @@ export function compareGuess(secret: string, guess: string): Feedback {
     const secretUsed = Array(secret.length).fill(false);
     const guessUsed = Array(guess.length).fill(false);
 
-    // First pass — count dead (exact matches)
+    // Pass 1: count exact matches ("dead") and mark used positions
     for (let i = 0; i < 4; i++) {
         if (guess[i] === secret[i]) {
             dead++;
@@ -20,7 +21,7 @@ export function compareGuess(secret: string, guess: string): Feedback {
         }
     }
 
-    // Second pass — count injured (right digit, wrong place)
+    // Pass 2: count correct digits in wrong positions ("injured") without double-counting
     for (let i = 0; i < 4; i++) {
         if (!guessUsed[i]) {
             for (let j = 0; j < 4; j++) {
@@ -35,23 +36,6 @@ export function compareGuess(secret: string, guess: string): Feedback {
 
     return { dead, injured };
 }
-/*
-THIS version is slightly 'too permissive', so it's been changed to the one above
-export function compareGuess(secret: string, guess: string): Feedback {
-    let dead = 0;
-    let injured = 0;
-
-    for (let i = 0; i < 4; i++) {
-        if (guess[i] === secret[i]) {
-            dead++;
-        } else if (secret.includes(guess[i])) {
-            injured++;
-        }
-    }
-
-    return {dead, injured};
-}
-*/
 
 export function generateComputerGuess(): string {
   const digits = [...Array(10).keys()].map(String); // ['0', '1', ..., '9']
@@ -61,7 +45,7 @@ export function generateComputerGuess(): string {
     const randIndex = Math.floor(Math.random() * digits.length);
     const digit = digits.splice(randIndex, 1)[0];
 
-    /* In the case where first digit can't be '0' (leading zero)
+    /* If you want to forbid leading zero, uncomment:
     if (guess.length === 0 && digit === '0') continue;
     */
     guess.push(digit);
@@ -70,7 +54,7 @@ export function generateComputerGuess(): string {
   return guess.join('');
 }
 
-// Helper to generate all 4-digit numbers with no repeating digits
+// Generates all 4-digit strings with no repeating digits (0000–9999 filtered by uniqueness)
 export function generateAllPossibleGuesses(): string[] {
     const results: string[] = [];
     for (let i = 0; i < 10000; i++) {
@@ -82,37 +66,3 @@ export function generateAllPossibleGuesses(): string[] {
     }
     return results;
 }
-
-/**
- * THIS COMPARE GUESS LOGIC IS BETTER FOR WHEN NUMBERS (SECRET OR GUESS) COULD HAVE REPEATING DIGITS
- * 
- * ...
- *  const tempResult: boolean[] = Array(4).fill(false);
-
-    const secretArr = secret.split('');
-    const guessArr = guess.split('');
-    const used = Array(4).fill(false);
-
-    // Check correct
-    for (let i = 0; i < 4; i++) {
-        if (guessArr[i] === secretArr[i]) {
-            tempResult[i] = true;
-            result['dead']+=1;
-            used[i] = true;
-        }
-    }
-
-    // Check misplaced
-    for (let i = 0; i < 4; i++) {
-        if (! tempResult[i]) {
-            const idx = secretArr.findIndex((digit, j) =>
-                digit === guessArr[i] && !used[j] && guessArr[j] !== secretArr[j]
-            );
-            if (idx !== -1) {
-                result['injured'] += 1;
-                used[idx] = true;
-            }
-        }
-    }
-
- */
