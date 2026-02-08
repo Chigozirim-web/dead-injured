@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/navBar";
 import { Toaster } from "@/components/ui/sonner";
 import dynamic from "next/dynamic";
+import Providers from "@/components/auth/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,9 @@ export default function RootLayout({
           <NavBar />
 
           <main className="flex-grow flex justify-center items-center">
-            {children}
+            <Providers>            
+              {children}
+            </Providers>
           </main>
           <Toaster position="top-center" className="relative z-100" />
           {/* Footer */}

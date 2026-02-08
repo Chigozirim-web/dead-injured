@@ -1,7 +1,6 @@
 'use client';
-//import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
-import { createGame } from "@/firebase/gameService";
+import { createGameFn } from "@/firebase/functionClient";
 import { InputDialog } from "@/components/inputDialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,8 +23,15 @@ export default function CreateGamePage() {
     const handleCreateGame = useCallback(async (name: string, secret: string) => {
         setOpen(false);
         setGameCreated(true);
-        const gameId = await createGame(name, secret);
-        setGameCode(gameId);
+        try {
+            const gameId = await createGameFn(name, secret);
+            setGameCode(gameId);
+        } catch (error: unknown) {
+            console.error("Error creating game:", error);
+            toast.error(error instanceof Error ? error.message : "Failed to create game.");
+            setGameCreated(false);
+            return;
+        };
     }, []);
 
     const handleCopy = async () => {

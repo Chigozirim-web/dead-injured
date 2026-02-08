@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { joinGame } from '@/firebase/gameService';
+import { joinGameFn } from '@/firebase/functionClient';
 
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -47,9 +47,10 @@ export default function JoinGamePage() {
         }
 
         try {
-            await joinGame(code.trim().toUpperCase(), name, secret);
+            const normalizedCode = code.trim().toUpperCase();
+            await joinGameFn(normalizedCode, name, secret);
             toast.success("Successfully joined the game!");
-            router.push(`/play/pvp/game/${code}`);
+            router.push(`/play/pvp/game/${normalizedCode}`);
         } catch (e) {
             console.error("Error joining game:", e);
             const errorMessage = (e instanceof Error) ? e.message : String(e);

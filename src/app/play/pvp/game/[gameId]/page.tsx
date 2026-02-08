@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { listenToGame, listenToMoves, submitGuess, toggleTurn, winGame } from '@/firebase/gameService';
+import { listenToGame, listenToMoves } from '@/firebase/gameService';
+import { submitGuessFn, toggleTurnFn } from '@/firebase/functionClient';
 import { PlayerMove, PVPGameState } from '@/lib/types';
 import {
     Dialog,
@@ -16,9 +17,9 @@ import {
 import { Info } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { compareGuess } from '@/lib/logic';
 import { toast } from 'sonner';
 import { QuitGameModal } from '@/components/quitGameModal';
+import { useAuth } from '@/components/auth/AuthProvider';
     
 const GameOverModal = dynamic(() => import('@/components/gameOverModal'), {
     ssr: false,
@@ -34,51 +35,37 @@ const PVPGameBoard = dynamic(() => import('@/components/pvpGameBoard'), {
 
 export default function GameRoomPage() {
     const { gameId } = useParams();
-    if (!gameId) {
-        return <h2>Invalid game link.</h2>;
-    };
-    
+    const { uid, loading: authLoading, error: authError } = useAuth();
     const router = useRouter();
 
     const [gameState, setGameState] = useState<PVPGameState>();
     const [gameMoves, setGameMoves] = useState<PlayerMove[]>([]);
     const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
 
     const [quitModalOpen, setQuitModalOpen] = useState(false);
     //const [coinFlipModalOpen, setCoinFlipModalOpen] = useState(false);
 
-    /*useEffect(() => {
-        const storedId = localStorage.getItem("myPlayerId");
-        if (storedId) {
-            setMyPlayerId(storedId);
-        }
-    }, []);
-    */
-
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const storedId = localStorage.getItem("myPlayerId");
-            if (storedId) {
-                setMyPlayerId(storedId);
-            }
-        }
-
         if (!gameId) return;
+
+        if(!uid) return;//wait until auth is ready
 
         const unsubscribeGame = listenToGame(gameId as string, setGameState);
         const unsubscribeMoves = listenToMoves(gameId as string, setGameMoves);
-   
+
         return () => {
             unsubscribeGame();
             unsubscribeMoves();
-            //localStorage.removeItem("myPlayerId");
-        } 
-    }, [gameId]);
+        }
+    }, [gameId, uid]);
 
-    if (!myPlayerId) {
-        return <h2 className='font-bold'>Please start or join a game first.</h2>;
-    }
+    if (!gameId) {
+        return <h2>Invalid game link.</h2>;
+    };
+
+    if (authLoading) return <h2>Loading...</h2>;
+    if (authError) return <h2>Auth error. Please refresh.</h2>;
+    if (!uid) return <h2>Please refresh.</h2>;
     
     if (!gameState) {
         return <h2>Loading game...</h2>;
@@ -86,14 +73,13 @@ export default function GameRoomPage() {
         return <h2 className='font-bold'>Waiting for other player to join...</h2>;
     }
     else {
-        const isMyTurn = gameState.currentTurn === myPlayerId;
-        const myInfo = gameState.player1.id === myPlayerId ? gameState.player1 : gameState.player2;
+        const isMyTurn = gameState.currentTurn === uid;
+        const myInfo = gameState.player1.id === uid ? gameState.player1 : gameState.player2;
+        const opponent = gameState.player1.id === uid ? gameState.player2 : gameState.player1;
 
-        const opponent = gameState.player1.id === myPlayerId ? gameState.player2 : gameState.player1;
-        
         const winnerName =
             gameState.gameOver && gameState.winner
-                ? gameState.winner === myPlayerId
+                ? gameState.winner === uid
                     ? myInfo.name
                     : opponent.name
                 : "";
@@ -106,41 +92,19 @@ export default function GameRoomPage() {
                 toast("Please enter a valid 4-digit guess.");
                 return;
             }
-
-            const feedback = compareGuess(opponent.secretNumber, guess);
-            const move: PlayerMove = {
-                playerId: myPlayerId,
-                guess,
-                result: feedback,
-            };
+            
             try {
-                await submitGuess(gameId as string, move);
+                await submitGuessFn(gameId as string, guess);
                 setSubmitSuccess(true);
-                if(feedback.dead === 4) {
-                    try {  
-                        await winGame(gameId as string, myPlayerId);
-                        //setWinnerName(gameState.player1.id === myPlayerId ? gameState.player1.name : gameState.player2?.name || "Unknown");
-                    } catch (error) {
-                        console.error("Error winning game:", error);
-                        toast.error("Failed to declare winner. Please try again.");
-                    }
-                }
-                return;
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("Error submitting guess:", error);
-                toast.error("Failed to submit guess. Please try again.");
+                toast.error(error instanceof Error ? error.message : "Failed to submit guess.");
             }
         };
 
-        const handleToggleTurn = async (playerId: string) => {
-            if (gameState.currentTurn === playerId) return; // Prevent toggling if it's already the player's turn
-            if(playerId === "") {
-                toast.error("System Error: Invalid player ID for toggling turn.");
-                return;
-            }
-
+        const handleToggleTurn = async () => {
             try {
-                await toggleTurn(gameId as string, playerId);
+                await toggleTurnFn(gameId as string);
                 setSubmitSuccess(false); // Reset success state after toggling turn
                 return;
             } catch (error) {
@@ -150,10 +114,7 @@ export default function GameRoomPage() {
         };
 
         const startNewGame = () => {
-            //setWinnerName("");
             setSubmitSuccess(false);
-            setMyPlayerId(null);
-            localStorage.removeItem("myPlayerId");
             router.push('/');
         };
 
@@ -217,7 +178,7 @@ export default function GameRoomPage() {
                         <PVPGameBoard 
                             gameState={gameState} 
                             gameMoves={gameMoves} 
-                            myPlayerId={myPlayerId} 
+                            myPlayerId={uid} 
                             submitSuccess={submitSuccess}
                             disabled={!isMyTurn}
                             onGuess={handleGuess}
@@ -230,9 +191,9 @@ export default function GameRoomPage() {
                         winnerName={winnerName}
                         open
                         onRestart={startNewGame}
-                        isWinner={gameState.winner === myPlayerId}
+                        isWinner={gameState.winner === uid}
                         opponentName={opponent.name}
-                        winnerSecret={opponent.secretNumber}
+                        winnerSecret={gameState.revealedSecret}
                     />
                 )}
             </div>

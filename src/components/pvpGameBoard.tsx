@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { AnimatePresence, motion } from "motion/react"
 import { isUniqueDigits } from '@/lib/logic';
@@ -9,7 +9,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Badge } from "@/components/ui/badge";
-import { PlayerMove, PVPGameBoardProps } from '@/lib/types';
+import { PVPGameBoardProps } from '@/lib/types';
 import { toast } from 'sonner';
 
 
@@ -17,7 +17,7 @@ const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSucces
     const [currentGuess, setCurrentGuess] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     
-    const isMyTurn = gameState.currentTurn === myPlayerId;
+    //const isMyTurn = gameState.currentTurn === myPlayerId;
     const currentPlayer = gameState.currentTurn === gameState.player1.id ? gameState.player1 : gameState.player2;
     const opponent = gameState.player1.id === myPlayerId ? gameState.player2 : gameState.player1;
     
@@ -182,7 +182,7 @@ const PVPGameBoard = ({ gameState, gameMoves, disabled, myPlayerId, submitSucces
                             className='mt-5 p-2 bg-green-500 text-white rounded-md cursor-pointer hover:bg-green-600'
                             onClick={() => { 
                                 setCurrentGuess(""); 
-                                onToggleTurn(opponent?.id || ""); 
+                                onToggleTurn(); 
                             }} 
                         >
                             End Turn {/* This button ends the turn and switches to the next player */}

@@ -1,4 +1,4 @@
-import { FieldValue } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type HandleInputFn = (name: string, secret: string) => void;
 
@@ -22,7 +22,6 @@ export enum DifficultyLevel {
 export type PlayerState = {
     id: string;
     name: string;
-    secretNumber: string;
 }
 
 export type PlayerMove = {
@@ -30,7 +29,7 @@ export type PlayerMove = {
     guess: string;
     result: Feedback;
     id?: string; //maybe use the database id generated when it is added instead of setting it manually in game ??
-    createdAt?: Date| FieldValue;
+    createdAt?: Date | Timestamp | FieldValue;
 }
 
 export type PVPGameState = {
@@ -39,9 +38,10 @@ export type PVPGameState = {
     status: PlayStatus;
     currentTurn: string; //playerID
     gameOver: boolean;
-    winner?: string; 
+    winner?: string | null; //playerID of winner 
+    revealedSecret?: string; //to reveal winner's secret at end of game
     showOpponentGuess: boolean; //to show results immediately after guess
-    createdAt: Date;
+    createdAt: Date | Timestamp | FieldValue;
 }
 
 export type GameOverModalProps = {
@@ -60,7 +60,7 @@ export interface PVPGameBoardProps {
     myPlayerId: string;
     submitSuccess: boolean;
     onGuess: (guess: string) => void;
-    onToggleTurn: (playerId: string) => void; 
+    onToggleTurn: () => void; 
 }
 
 export type PVCGameboardProps = {
@@ -92,4 +92,11 @@ export type InputDialogProps = {
 export type QuitGameModalProps = {
     onClose: () => void;
     onQuit: () => void;
+};
+
+export type AuthState = {
+    uid: string | null;
+    loading: boolean;
+    error: Error | null;
+    refresh: () => Promise<void>;
 };
